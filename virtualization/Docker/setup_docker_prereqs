@@ -62,6 +62,11 @@ if [ "$INSTALL_SSOCR" == "yes" ]; then
   virtualization/Docker/scripts/ssocr
 fi
 
+pip3 install cython wheel six
+pip3 install 'PyDispatcher>=2.0.5'
+git clone https://github.com/OpenZWave/python-openzwave.git
+cd python-openzwave && pip3 install . --install-option="--flavor=git"
+
 # Remove packages
 apt-get remove -y --purge ${PACKAGES_DEV[@]}
 apt-get -y --purge autoremove
