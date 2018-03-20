@@ -49,8 +49,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
-@asyncio.coroutine
-def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
+def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up an Arlo IP Camera."""
     arlo = hass.data.get(DATA_ARLO)
     if not arlo:
@@ -60,7 +59,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     for camera in arlo.cameras:
         cameras.append(ArloCam(hass, camera, config))
 
-    async_add_devices(cameras, True)
+    add_devices(cameras, True)
 
 
 class ArloCam(Camera):
@@ -75,7 +74,9 @@ class ArloCam(Camera):
         self._ffmpeg = hass.data[DATA_FFMPEG]
         self._ffmpeg_arguments = device_info.get(CONF_FFMPEG_ARGUMENTS)
         self._last_refresh = None
-        self._camera.base_station.refresh_rate = SCAN_INTERVAL.total_seconds()
+        if self._camera.base_station:
+            self._camera.base_station.refresh_rate = \
+                SCAN_INTERVAL.total_seconds()
         self.attrs = {}
 
     def camera_image(self):
